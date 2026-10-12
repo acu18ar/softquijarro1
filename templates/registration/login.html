@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Ingresar{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center mt-4">
+  <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <div class="text-center mb-3">
+          <i class="bi bi-tools" style="font-size:2.5rem;color:var(--azul)"></i>
+          <h1 class="h4 mt-2">SoftQuijarro S.R.L.</h1>
+          <p class="text-muted small">Ingresa para continuar</p>
+        </div>
+        {% if form.errors %}<div class="alert alert-danger py-2 small">Usuario o contraseña incorrectos.</div>{% endif %}
+        <form method="post">{% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="id_username">Usuario</label>
+            <input class="form-control" name="username" id="id_username" autofocus required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="id_password">Contraseña</label>
+            <input class="form-control" type="password" name="password" id="id_password" required>
+          </div>
+          <input type="hidden" name="next" value="{{ next }}">
+          <button class="btn btn-primary w-100">Ingresar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

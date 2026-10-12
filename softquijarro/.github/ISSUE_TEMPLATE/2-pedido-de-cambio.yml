@@ -1,0 +1,24 @@
+name: Pedido de cambio (cliente)
+description: El cliente pide cambiar algo durante el sprint.
+title: "[CAMBIO] "
+labels: ["pedido de cambio"]
+body:
+  - type: textarea
+    id: pedido
+    attributes: {label: ¿Qué pide el cliente?}
+    validations: {required: true}
+  - type: dropdown
+    id: modulos
+    attributes:
+      label: Módulos afectados
+      multiple: true
+      options: [clientes, productos, facturacion, proveedores, reportes]
+  - type: textarea
+    id: impacto
+    attributes:
+      label: Análisis de impacto (lo completa el equipo)
+      value: |
+        - ¿Qué historias del sprint se afectan?
+        - ¿Cuánto esfuerzo extra (puntos u horas)?
+        - ¿Qué sacamos del sprint para hacerle lugar?
+        - Decisión del Product Owner:

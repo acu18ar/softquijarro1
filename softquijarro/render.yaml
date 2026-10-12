@@ -1,0 +1,34 @@
+# Despliegue en Render (plan gratuito). ⚠️ Archivo del docente.
+# Render lee este archivo al crear el "Blueprint" y luego despliega `main`
+# automáticamente, pero SOLO si las verificaciones de GitHub pasaron.
+databases:
+  - name: softquijarro-db
+    plan: free
+    region: virginia
+    databaseName: softquijarro
+    user: softquijarro
+
+services:
+  - type: web
+    name: softquijarro
+    runtime: python
+    plan: free
+    region: virginia
+    branch: main
+    autoDeployTrigger: checksPass
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application
+    healthCheckPath: /salud/
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: softquijarro-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: ADMIN_USUARIO
+        sync: false
+      - key: ADMIN_CLAVE
+        sync: false

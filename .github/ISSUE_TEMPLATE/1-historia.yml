@@ -1,0 +1,34 @@
+name: Historia de usuario
+description: Una funcionalidad nueva, escrita desde el punto de vista del usuario.
+title: "[??] "
+labels: ["historia"]
+body:
+  - type: dropdown
+    id: modulo
+    attributes:
+      label: Módulo
+      options: [clientes, productos, facturacion, proveedores, reportes]
+    validations: {required: true}
+  - type: input
+    id: como
+    attributes: {label: Como..., placeholder: "vendedor de la ferretería"}
+    validations: {required: true}
+  - type: input
+    id: quiero
+    attributes: {label: Quiero..., placeholder: "registrar un cliente nuevo"}
+    validations: {required: true}
+  - type: input
+    id: para
+    attributes: {label: Para..., placeholder: "atenderlo rápido en el mostrador"}
+    validations: {required: true}
+  - type: textarea
+    id: criterios
+    attributes:
+      label: Criterios de aceptación
+      value: |
+        - [ ] 
+        - [ ] 
+    validations: {required: true}
+  - type: input
+    id: puntos
+    attributes: {label: Estimación (puntos), placeholder: "1, 2, 3, 5 u 8"}

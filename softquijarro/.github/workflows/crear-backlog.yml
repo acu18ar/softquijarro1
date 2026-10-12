@@ -1,0 +1,20 @@
+# El docente la ejecuta UNA vez: Actions → «Crear backlog» → Run workflow.
+name: Crear backlog
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  backlog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crear etiquetas, sprints e historias
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 .github/scripts/crear_backlog.py

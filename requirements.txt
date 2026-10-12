@@ -1,0 +1,6 @@
+# ⚠️ Solo el docente agrega librerías. Si necesitas una, pídela en un Issue.
+Django>=5.2,<5.3
+dj-database-url>=2.2
+psycopg[binary]>=3.2
+gunicorn>=23.0
+whitenoise>=6.7

@@ -1,0 +1,73 @@
+# Verificación automática de cada pull request. ⚠️ Archivo del docente.
+# Si sale una ❌ roja, haz clic en "Details" para ver qué falló.
+name: Verificación
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  carpeta-propia:
+    name: Solo tocaste tu carpeta
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Traer el pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          path: pr
+      # Las reglas se leen de main, no del pull request: así nadie puede
+      # "arreglar" la verificación desde su propia rama.
+      - name: Traer las reglas desde main
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: reglas
+      - name: Verificar archivos modificados
+        run: |
+          cd pr
+          git diff --name-only HEAD^1 HEAD > ../cambios.txt
+          cd ..
+          echo "Archivos modificados:"; cat cambios.txt; echo ""
+          python3 reglas/.github/scripts/verificar_carpeta.py \
+            reglas/.github/equipo.json "${{ github.event.pull_request.user.login }}" < cambios.txt
+
+  pruebas:
+    name: El sistema funciona
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: softquijarro
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/softquijarro
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: ¿Olvidaste subir una migración?
+        run: |
+          python manage.py makemigrations --check --dry-run || {
+            echo "";
+            echo "❌ Cambiaste un modelo pero no subiste la migración.";
+            echo "   Corre: python manage.py makemigrations  y haz commit del archivo nuevo.";
+            exit 1; }
+      - name: Las migraciones se aplican
+        run: python manage.py migrate
+      - name: Los datos de prueba cargan
+        run: python manage.py cargar_datos_demo
+      - name: Pruebas automáticas (las tuyas y las de contrato)
+        run: python manage.py test
