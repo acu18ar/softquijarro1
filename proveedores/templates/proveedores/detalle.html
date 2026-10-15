@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}{{ proveedor.nombre }}{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0"><i class="bi bi-truck"></i> {{ proveedor.nombre }}</h1>
+  <div>
+    <a href="{% url 'proveedores:editar' proveedor.pk %}" class="btn btn-outline-primary">Editar</a>
+    <a href="{% url 'proveedores:inicio' %}" class="btn btn-outline-secondary">Volver</a>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-3"><div class="card-body">
+  <dl class="row mb-0">
+    <dt class="col-sm-3">Categoría</dt><dd class="col-sm-9">{{ proveedor.get_categoria_display }}</dd>
+    <dt class="col-sm-3">Tipo</dt><dd class="col-sm-9">{{ proveedor.get_tipo_display }}</dd>
+    <dt class="col-sm-3">NIT o CI</dt><dd class="col-sm-9">{{ proveedor.nit|default:"—" }}</dd>
+    <dt class="col-sm-3">Contacto</dt><dd class="col-sm-9">{{ proveedor.contacto|default:"—" }}</dd>
+    <dt class="col-sm-3">Teléfono</dt><dd class="col-sm-9">{{ proveedor.telefono|default:"—" }}</dd>
+    <dt class="col-sm-3">Correo</dt><dd class="col-sm-9">{{ proveedor.correo|default:"—" }}</dd>
+    <dt class="col-sm-3">Dirección</dt><dd class="col-sm-9">{{ proveedor.direccion|default:"—" }}</dd>
+  </dl>
+</div></div>
+
+<h2 class="h5">Productos que surte</h2>
+<div class="card shadow-sm">
+  <table class="table mb-0">
+    <thead class="table-light"><tr><th>Producto</th><th class="text-end">Precio (Bs)</th><th class="text-end">Stock actual</th></tr></thead>
+    <tbody>
+      {% for p in productos %}
+      <tr><td>{{ p.nombre }}</td><td class="text-end">{{ p.precio }}</td><td class="text-end">{{ p.stock }}</td></tr>
+      {% empty %}
+      <tr><td colspan="3" class="text-muted">Este proveedor aún no tiene productos asignados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -2,16 +2,39 @@ from django.db import models
 
 
 class Proveedor(models.Model):
+    TIPOS = [
+        ("empresa", "Empresa"),
+        ("persona", "Persona natural"),
+    ]
+    CATEGORIAS = [
+        ("construccion", "Construcción"),
+        ("herramientas", "Herramientas"),
+        ("electricidad", "Electricidad"),
+        ("plomeria", "Plomería"),
+        ("pinturas", "Pinturas"),
+        ("fijaciones", "Fijaciones y seguridad"),
+        ("otra", "Otra"),
+    ]
+
     # ── CAMPOS BASE ─────────────────────────────────────────────────────────
     nombre = models.CharField("nombre o razón social", max_length=150)
-    telefono = models.CharField("teléfono", max_length=30, blank=True)
+    telefono = models.CharField("teléfono o celular", max_length=30, blank=True)
 
-    # ── TUS CAMPOS NUEVOS VAN AQUÍ ──────────────────────────────────────────
-    # Regla: todo campo nuevo lleva blank=True, null=True o un default.
-    # La relación con productos la defines TÚ, aquí, sin tocar el módulo
-    # Productos. Pista:
-    #   productos = models.ManyToManyField("productos.Producto", blank=True,
-    #                                      related_name="proveedores")
+    # ── A. Datos generales ──────────────────────────────────────────────────
+    nit = models.CharField("NIT o CI", max_length=20, blank=True)
+    tipo = models.CharField("tipo de proveedor", max_length=10, choices=TIPOS, default="empresa")
+    categoria = models.CharField("categoría principal", max_length=20, choices=CATEGORIAS, default="otra")
+
+    # ── B. Información de contacto ──────────────────────────────────────────
+    contacto = models.CharField("nombre del contacto", max_length=100, blank=True)
+    correo = models.EmailField("correo electrónico", blank=True)
+    direccion = models.CharField("dirección", max_length=200, blank=True)
+
+    # ── C. Productos que surte (relación con Productos) ─────────────────────
+    productos = models.ManyToManyField(
+        "productos.Producto", blank=True, related_name="proveedores",
+        verbose_name="productos que surte",
+    )
 
     class Meta:
         ordering = ["nombre"]

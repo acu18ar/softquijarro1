@@ -7,5 +7,8 @@ app_name = "proveedores"
 
 urlpatterns = [
     path("", views.inicio, name="inicio"),
-    # Agrega aquí tus rutas.
+    path("nuevo/", views.crear, name="crear"),
+    path("<int:pk>/", views.detalle, name="detalle"),
+    path("<int:pk>/editar/", views.editar, name="editar"),
+    path("<int:pk>/eliminar/", views.eliminar, name="eliminar"),
 ]
