@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Tablero{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-1">Ferretería SoftQuijarro S.R.L.</h1>
+<p class="text-muted mb-4">Sistema de ventas y facturación · cada módulo tiene un responsable del equipo.</p>
+
+<div class="row g-3">
+  {% for m in modulos_menu %}
+  <div class="col-12 col-sm-6 col-xl-4">
+    <div class="card tarjeta-modulo shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <i class="bi {{ m.icono }} icono"></i>
+          {% if m.estado == "listo" %}
+            <span class="badge text-bg-success">Listo</span>
+          {% else %}
+            <span class="badge text-bg-warning">{{ m.estado|capfirst }}</span>
+          {% endif %}
+        </div>
+        <h2 class="h5 mt-2 mb-1">{{ m.nombre }}</h2>
+        <p class="small text-muted mb-2">{{ m.descripcion }}</p>
+        <p class="small mb-3"><i class="bi bi-person"></i> Responsable: <strong>{{ m.responsable }}</strong></p>
+        {% if m.url %}<a href="{{ m.url }}" class="btn btn-sm btn-primary stretched-link">Abrir</a>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

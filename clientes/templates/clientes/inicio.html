@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Clientes{% endblock %}
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0"><i class="bi bi-people"></i> Clientes</h1>
+  <a href="{% url 'clientes:gestionar' %}" class="btn btn-primary">
+    <i class="bi bi-gear"></i> Gestionar clientes
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Nombre o razón social</th>
+          <th>NIT / CI</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in clientes %}
+        <tr>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.nit }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="2" class="text-muted text-center py-3">
+            No hay clientes registrados.
+            <a href="{% url 'clientes:gestionar' %}">Crear el primero</a>.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

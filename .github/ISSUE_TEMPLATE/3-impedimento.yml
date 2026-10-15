@@ -1,0 +1,12 @@
+name: Impedimento
+description: Algo te bloquea y no puedes avanzar. El Scrum Master lo atiende.
+title: "[BLOQUEO] "
+labels: ["impedimento"]
+body:
+  - type: textarea
+    id: que
+    attributes: {label: ¿Qué te bloquea?}
+    validations: {required: true}
+  - type: textarea
+    id: intentado
+    attributes: {label: ¿Qué intentaste ya?}

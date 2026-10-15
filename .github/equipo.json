@@ -1,0 +1,11 @@
+{
+  "_instrucciones": "El docente reemplaza cada USUARIO_... por el usuario de GitHub real (sin @). Si un estudiante toma la tarjeta de un compañero ausente, agrega esa carpeta a su lista.",
+  "docente": "USUARIO_DOCENTE",
+  "estudiantes": {
+    "USUARIO_CLIENTES": ["clientes"],
+    "USUARIO_PRODUCTOS": ["productos"],
+    "USUARIO_FACTURACION": ["facturacion"],
+    "USUARIO_PROVEEDORES": ["proveedores"],
+    "USUARIO_REPORTES": ["reportes"]
+  }
+}
