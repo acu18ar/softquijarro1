@@ -6,7 +6,6 @@ from . import views
 app_name = "clientes"
 
 urlpatterns = [
-    path("", views.inicio, name="inicio"),
-    # Agrega aquí tus rutas, por ejemplo:
-    # path("nuevo/", views.nuevo, name="nuevo"),
+    path("",           views.inicio,     name="inicio"),
+    path("gestionar/", views.gestionar,  name="gestionar"),
 ]
