@@ -8,7 +8,7 @@ class ProductosConfig(AppConfig):
 
     # ── Datos para el menú y el tablero. Estos SÍ los cambias tú ──────────
     responsable = "Sin asignar"          # ← escribe tu nombre
-    estado = "en construcción"           # ← cámbialo a "listo" al terminar
+    estado = "listo"           # ← cámbialo a "listo" al terminar
     icono = "bi-box-seam"
     descripcion = "Catálogo de la ferretería con precio y stock."
     url_inicio = "productos:inicio"
