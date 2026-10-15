@@ -4,6 +4,7 @@ from django.db import models
 class Producto(models.Model):
     # ── CAMPOS BASE (NO TOCAR) ──────────────────────────────────────────
     nombre = models.CharField(max_length=150)
+    categoria = models.CharField(max_length=100)
     precio = models.DecimalField("precio (Bs)", max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
 
