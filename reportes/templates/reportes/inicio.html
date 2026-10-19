@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block titulo %}Reportes{% endblock %}
 {% block contenido %}
+<<<<<<< HEAD
 <h1 class="h3 mb-3"><i class="bi bi-bar-chart-line"></i> Reportes</h1>
 
 <div class="alert aviso-construccion small">
@@ -13,13 +14,282 @@
     <div class="card shadow-sm"><div class="card-body">
       <div class="text-muted small">Facturas emitidas</div>
       <div class="fs-3 fw-semibold">{{ resumen.cantidad }}</div>
+=======
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0"><i class="bi bi-bar-chart-line"></i> Reportes</h1>
+  <div class="d-flex gap-2 align-items-center">
+    <span class="text-muted small">{{ hoy|date:"l, d \d\e F \d\e Y" }}</span>
+    <a href="{% url 'reportes:imprimir' %}" target="_blank"
+       class="btn btn-outline-danger">
+      <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+    </a>
+  </div>
+</div>
+
+{% if not facturacion_lista %}
+  <div class="alert alert-warning small">
+    <i class="bi bi-cone-striped"></i>
+    <strong>Módulo de facturación en construcción.</strong>
+    Cuando esté disponible, aquí aparecerán automáticamente las ventas del día,
+    los productos más vendidos y los clientes frecuentes.
+  </div>
+{% endif %}
+
+{# ══════════════════════════════════════════════════════════════════════ #}
+{# SECCIÓN 1 — VENTAS DEL DÍA                                          #}
+{# ══════════════════════════════════════════════════════════════════════ #}
+<h2 class="h5 mt-4 mb-3"><i class="bi bi-cash-coin"></i> Ventas del día</h2>
+{% if facturacion_lista %}
+  <div class="row g-3 mb-2">
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm"><div class="card-body">
+        <div class="text-muted small">Facturas emitidas hoy</div>
+        <div class="fs-3 fw-semibold">{{ ventas_dia.cantidad|default:0 }}</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card shadow-sm"><div class="card-body">
+        <div class="text-muted small">Total vendido hoy (Bs)</div>
+        <div class="fs-3 fw-semibold">{{ ventas_dia.total|default:0 }}</div>
+      </div></div>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-secondary small">
+    <i class="bi bi-clock-history"></i> Aún no disponible.
+  </div>
+{% endif %}
+
+{# ══════════════════════════════════════════════════════════════════════ #}
+{# SECCIÓN 2 — PRODUCTOS MÁS VENDIDOS                                  #}
+{# ══════════════════════════════════════════════════════════════════════ #}
+<h2 class="h5 mt-4 mb-3"><i class="bi bi-trophy"></i> Productos más vendidos</h2>
+{% if facturacion_lista %}
+  {% if mas_vendidos %}
+    <div class="card shadow-sm">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr><th>#</th><th>Producto</th><th class="text-end">Unidades vendidas</th></tr>
+        </thead>
+        <tbody>
+          {% for p in mas_vendidos %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ p.producto__nombre }}</td>
+            <td class="text-end">{{ p.unidades }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-secondary small">Sin ventas registradas en los últimos 30 días.</div>
+  {% endif %}
+{% else %}
+  <div class="alert alert-secondary small"><i class="bi bi-clock-history"></i> Aún no disponible.</div>
+{% endif %}
+
+{# ══════════════════════════════════════════════════════════════════════ #}
+{# SECCIÓN 3 — CLIENTES FRECUENTES                                     #}
+{# ══════════════════════════════════════════════════════════════════════ #}
+<h2 class="h5 mt-4 mb-3"><i class="bi bi-people"></i> Clientes frecuentes</h2>
+{% if facturacion_lista %}
+  {% if clientes_frecuentes %}
+    <div class="card shadow-sm">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr><th>#</th><th>Cliente</th><th>NIT / CI</th>
+              <th class="text-end">Compras</th>
+              <th class="text-end">Total (Bs)</th></tr>
+        </thead>
+        <tbody>
+          {% for c in clientes_frecuentes %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ c.cliente__nombre }}</td>
+            <td class="small text-muted">{{ c.cliente__nit }}</td>
+            <td class="text-end">{{ c.compras }}</td>
+            <td class="text-end">{{ c.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-secondary small">Sin datos de clientes frecuentes todavía.</div>
+  {% endif %}
+{% else %}
+  <div class="alert alert-secondary small"><i class="bi bi-clock-history"></i> Aún no disponible.</div>
+{% endif %}
+
+{# ══════════════════════════════════════════════════════════════════════ #}
+{# SECCIÓN 4 — INVENTARIO (siempre disponible)                          #}
+{# ══════════════════════════════════════════════════════════════════════ #}
+<h2 class="h5 mt-4 mb-3"><i class="bi bi-box-seam"></i> Inventario</h2>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted small">Productos registrados</div>
+      <div class="fs-3 fw-semibold">{{ total_productos }}</div>
     </div></div>
   </div>
   <div class="col-6 col-lg-3">
     <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted small">Con stock bajo</div>
+      <div class="fs-3 fw-semibold text-warning">{{ total_stock_bajo }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted small">Sin stock</div>
+      <div class="fs-3 fw-semibold text-danger">{{ sin_stock }}</div>
+    </div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted small">Valor del inventario (Bs)</div>
+      <div class="fs-3 fw-semibold">{{ valor_inventario|floatformat:2 }}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-exclamation-triangle-fill text-warning"></i> Productos con stock bajo
+      </div>
+      {% if stock_bajo %}
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Producto</th>
+                <th class="text-end">Stock</th>
+                <th class="text-end">Mínimo</th></tr>
+          </thead>
+          <tbody>
+            {% for p in stock_bajo %}
+            <tr>
+              <td>{{ p.nombre }}</td>
+              <td class="text-end"><span class="badge bg-warning text-dark">{{ p.stock }}</span></td>
+              <td class="text-end text-muted">{{ p.stock_minimo }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="card-body text-muted small">Todos los productos tienen stock suficiente. ✅</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-tags"></i> Productos por categoría
+      </div>
+      {% if por_categoria %}
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Categoría</th><th class="text-end">Cantidad</th></tr>
+          </thead>
+          <tbody>
+            {% for c in por_categoria %}
+            <tr>
+              <td><span class="badge bg-secondary">{{ c.categoria }}</span></td>
+              <td class="text-end">{{ c.cantidad }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="card-body text-muted small">Sin productos registrados.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{# ══════════════════════════════════════════════════════════════════════ #}
+{# SECCIÓN 5 — CLIENTES Y PROVEEDORES                                   #}
+{# ══════════════════════════════════════════════════════════════════════ #}
+<h2 class="h5 mt-4 mb-3"><i class="bi bi-people-fill"></i> Clientes y proveedores</h2>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3">
+    <div class="card shadow-sm"><div class="card-body">
+      <div class="text-muted small">Clientes registrados</div>
+      <div class="fs-3 fw-semibold">{{ total_clientes }}</div>
+>>>>>>> 75a95613f60bda2004e352862a02c5fddd9b8c31
+    </div></div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card shadow-sm"><div class="card-body">
+<<<<<<< HEAD
       <div class="text-muted small">Total vendido (Bs)</div>
       <div class="fs-3 fw-semibold">{{ resumen.vendido|default:0 }}</div>
     </div></div>
   </div>
 </div>
 {% endblock %}
+=======
+      <div class="text-muted small">Proveedores registrados</div>
+      <div class="fs-3 fw-semibold">{{ total_proveedores }}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-currency-dollar"></i> Top productos por valor en stock
+      </div>
+      {% if top_valor %}
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Producto</th><th class="text-end">Valor (Bs)</th></tr>
+          </thead>
+          <tbody>
+            {% for p in top_valor %}
+            <tr>
+              <td>{{ p.nombre }}</td>
+              <td class="text-end">{{ p.valor|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="card-body text-muted small">Sin productos registrados.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-truck"></i> Proveedores con más productos
+      </div>
+      {% if proveedores_con_productos %}
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr><th>Proveedor</th><th class="text-end">Productos</th></tr>
+          </thead>
+          <tbody>
+            {% for p in proveedores_con_productos %}
+            <tr>
+              <td>{{ p.nombre }}</td>
+              <td class="text-end">{{ p.cantidad_productos }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="card-body text-muted small">Sin proveedores registrados.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+>>>>>>> 75a95613f60bda2004e352862a02c5fddd9b8c31

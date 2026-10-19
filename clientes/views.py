@@ -16,6 +16,10 @@ def inicio(request):
     })
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 75a95613f60bda2004e352862a02c5fddd9b8c31
 @login_required
 def gestionar(request):
     cliente_editar = None
