@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reporte — {{ hoy|date:"d/m/Y" }}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 12px; margin: 20px; color: #222; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    h2 { font-size: 14px; margin: 24px 0 8px; border-bottom: 1px solid #999; padding-bottom: 4px; }
+    h3 { font-size: 12px; margin: 12px 0 6px; }
+    .subtitulo { color: #666; font-size: 11px; margin-bottom: 20px; }
+    .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .card { border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px; flex: 1; min-width: 140px; }
+    .card .label { color: #666; font-size: 10px; text-transform: uppercase; }
+    .card .valor { font-size: 18px; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; }
+    th { background: #eee; font-size: 11px; }
+    .text-end { text-align: right; }
+    .texto-vacio { color: #888; font-style: italic; padding: 8px; }
+    .pie { margin-top: 32px; font-size: 10px; color: #888; text-align: center; }
+    .botones { margin-bottom: 20px; }
+    .botones button { padding: 6px 14px; font-size: 13px; cursor: pointer; }
+    @media print {
+      body { margin: 8mm; }
+      .no-imprimir { display: none; }
+      h2 { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="botones no-imprimir">
+  <button onclick="window.print()">🖨️ Guardar como PDF / Imprimir</button>
+</div>
+
+<h1>Reporte General — SoftQuijarro</h1>
+<div class="subtitulo">Generado el {{ hoy|date:"l, d \d\e F \d\e Y" }}</div>
+
+{# ═══ 1. VENTAS DEL DÍA ═══ #}
+<h2>1. Ventas del día</h2>
+{% if facturacion_lista %}
+  <div class="cards">
+    <div class="card">
+      <div class="label">Facturas emitidas</div>
+      <div class="valor">{{ ventas_dia.cantidad|default:0 }}</div>
+    </div>
+    <div class="card">
+      <div class="label">Total vendido (Bs)</div>
+      <div class="valor">{{ ventas_dia.total|default:0 }}</div>
+    </div>
+  </div>
+{% else %}
+  <p class="texto-vacio">Módulo de facturación aún en construcción.</p>
+{% endif %}
+
+{# ═══ 2. PRODUCTOS MÁS VENDIDOS ═══ #}
+<h2>2. Productos más vendidos (últimos 30 días)</h2>
+{% if facturacion_lista and mas_vendidos %}
+  <table>
+    <thead><tr><th>#</th><th>Producto</th><th class="text-end">Unidades</th></tr></thead>
+    <tbody>
+      {% for p in mas_vendidos %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ p.producto__nombre }}</td>
+        <td class="text-end">{{ p.unidades }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Sin datos disponibles.</p>
+{% endif %}
+
+{# ═══ 3. CLIENTES FRECUENTES ═══ #}
+<h2>3. Clientes frecuentes</h2>
+{% if facturacion_lista and clientes_frecuentes %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Cliente</th><th>NIT / CI</th>
+          <th class="text-end">Compras</th><th class="text-end">Total (Bs)</th></tr>
+    </thead>
+    <tbody>
+      {% for c in clientes_frecuentes %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ c.cliente__nombre }}</td>
+        <td>{{ c.cliente__nit }}</td>
+        <td class="text-end">{{ c.compras }}</td>
+        <td class="text-end">{{ c.total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Sin datos disponibles.</p>
+{% endif %}
+
+{# ═══ 4. INVENTARIO ═══ #}
+<h2>4. Inventario</h2>
+<div class="cards">
+  <div class="card"><div class="label">Productos</div>
+    <div class="valor">{{ total_productos }}</div></div>
+  <div class="card"><div class="label">Stock bajo</div>
+    <div class="valor">{{ total_stock_bajo }}</div></div>
+  <div class="card"><div class="label">Sin stock</div>
+    <div class="valor">{{ sin_stock }}</div></div>
+  <div class="card"><div class="label">Valor inventario (Bs)</div>
+    <div class="valor">{{ valor_inventario|floatformat:2 }}</div></div>
+</div>
+
+<h3>Productos con stock bajo</h3>
+{% if stock_bajo %}
+  <table>
+    <thead><tr><th>Producto</th><th class="text-end">Stock</th><th class="text-end">Mínimo</th></tr></thead>
+    <tbody>
+      {% for p in stock_bajo %}
+      <tr>
+        <td>{{ p.nombre }}</td>
+        <td class="text-end">{{ p.stock }}</td>
+        <td class="text-end">{{ p.stock_minimo }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Todos los productos tienen stock suficiente.</p>
+{% endif %}
+
+<h3>Productos por categoría</h3>
+{% if por_categoria %}
+  <table>
+    <thead><tr><th>Categoría</th><th class="text-end">Cantidad</th></tr></thead>
+    <tbody>
+      {% for c in por_categoria %}
+      <tr><td>{{ c.categoria }}</td><td class="text-end">{{ c.cantidad }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Sin productos registrados.</p>
+{% endif %}
+
+{# ═══ 5. CLIENTES Y PROVEEDORES ═══ #}
+<h2>5. Clientes y proveedores</h2>
+<div class="cards">
+  <div class="card"><div class="label">Clientes</div>
+    <div class="valor">{{ total_clientes }}</div></div>
+  <div class="card"><div class="label">Proveedores</div>
+    <div class="valor">{{ total_proveedores }}</div></div>
+</div>
+
+<h3>Top productos por valor en stock</h3>
+{% if top_valor %}
+  <table>
+    <thead><tr><th>Producto</th><th class="text-end">Valor (Bs)</th></tr></thead>
+    <tbody>
+      {% for p in top_valor %}
+      <tr><td>{{ p.nombre }}</td><td class="text-end">{{ p.valor|floatformat:2 }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Sin productos registrados.</p>
+{% endif %}
+
+<h3>Proveedores con más productos</h3>
+{% if proveedores_con_productos %}
+  <table>
+    <thead><tr><th>Proveedor</th><th class="text-end">Productos</th></tr></thead>
+    <tbody>
+      {% for p in proveedores_con_productos %}
+      <tr><td>{{ p.nombre }}</td><td class="text-end">{{ p.cantidad_productos }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="texto-vacio">Sin proveedores registrados.</p>
+{% endif %}
+
+<div class="pie">Sistema SoftQuijarro — Módulo de Reportes</div>
+
+</body>
+</html>

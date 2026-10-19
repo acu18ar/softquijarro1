@@ -7,8 +7,8 @@ class ReportesConfig(AppConfig):
     verbose_name = "Reportes"
 
     # ── Datos para el menú y el tablero. Estos SÍ los cambias tú ──────────
-    responsable = "Sin asignar"          # ← escribe tu nombre
-    estado = "en construcción"           # ← cámbialo a "listo" al terminar
+    responsable = "alberto"          # ← escribe tu nombre
+    estado = "listo"           # ← cámbialo a "listo" al terminar
     icono = "bi-bar-chart-line"
     descripcion = "Ventas del día, productos más vendidos y clientes frecuentes."
     url_inicio = "reportes:inicio"
