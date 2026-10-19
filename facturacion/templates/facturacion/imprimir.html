@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Factura {{ factura.pk }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            color: #222;
+        }
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #222;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        .numero, .derecha { text-align: right; }
+        .total { font-size: 20px; font-weight: bold; }
+        .acciones { margin-bottom: 20px; }
+        @media print {
+            .acciones { display: none; }
+            body { margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="acciones">
+        <button onclick="window.print()">Imprimir factura</button>
+        <button onclick="window.history.back()">Volver</button>
+    </div>
+
+    <div class="encabezado">
+        <div>
+            <h2>FACTURA</h2>
+            <p>Documento de venta</p>
+        </div>
+        <div class="numero">
+            <h3>N.º {{ factura.pk }}</h3>
+            <p>{{ factura.fecha|date:"d/m/Y H:i" }}</p>
+        </div>
+    </div>
+
+    <p><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th class="derecha">Precio (Bs)</th>
+                <th class="derecha">Cantidad</th>
+                <th class="derecha">Subtotal (Bs)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in factura.detalles.all %}
+            <tr>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td class="derecha">{{ detalle.precio_unitario|floatformat:2 }}</td>
+                <td class="derecha">{{ detalle.cantidad }}</td>
+                <td class="derecha">{{ detalle.subtotal|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="derecha total">TOTAL (Bs)</td>
+                <td class="derecha total">{{ factura.total|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
