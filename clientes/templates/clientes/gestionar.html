@@ -24,7 +24,6 @@
       <thead class="table-light">
         <tr>
           <th>#</th>
-          <th>Imagen</th>
           <th>Nombre o razón social</th>
           <th>NIT / CI</th>
           <th class="text-end" style="width: 160px;">Acciones</th>
@@ -34,32 +33,21 @@
         {% for c in clientes %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td>
-            {% if c.imagen %}
-              <img src="{{ c.imagen.url }}" alt="{{ c.nombre }}"
-                   class="rounded object-fit-cover"
-                   style="width:44px; height:44px;">
-            {% else %}
-              <div class="rounded bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center"
-                   style="width:44px; height:44px;">
-                <i class="bi bi-person text-secondary"></i>
-              </div>
-            {% endif %}
-          </td>
           <td>{{ c.nombre }}</td>
           <td>{{ c.nit }}</td>
           <td class="text-end">
+            <!-- Botón editar: carga datos en el modal -->
             <button class="btn btn-sm btn-outline-secondary btn-editar"
                     title="Editar"
                     data-bs-toggle="modal"
                     data-bs-target="#modalEditar"
                     data-id="{{ c.pk }}"
                     data-nombre="{{ c.nombre }}"
-                    data-nit="{{ c.nit }}"
-                    data-imagen="{% if c.imagen %}{{ c.imagen.url }}{% endif %}">
+                    data-nit="{{ c.nit }}">
               <i class="bi bi-pencil"></i>
             </button>
 
+            <!-- Botón eliminar: pasa datos al modal de confirmación -->
             <button class="btn btn-sm btn-outline-danger btn-eliminar"
                     title="Eliminar"
                     data-bs-toggle="modal"
@@ -73,7 +61,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" class="text-muted text-center py-3">
+          <td colspan="4" class="text-muted text-center py-3">
             No hay clientes registrados. Usa <strong>Nuevo cliente</strong> para agregar el primero.
           </td>
         </tr>
@@ -83,11 +71,13 @@
   </div>
 </div>
 
-<!-- ══════════════════════ MODAL CREAR ══════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════
+     MODAL CREAR
+     ══════════════════════════════════════════════════════════════════════ -->
 <div class="modal fade" id="modalCrear" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" enctype="multipart/form-data" novalidate>
+      <form method="post" novalidate>
         {% csrf_token %}
         <input type="hidden" name="accion" value="crear">
         <div class="modal-header">
@@ -105,13 +95,6 @@
             <input type="text" name="nit" class="form-control"
                    placeholder="NIT / CI" required>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Imagen / Logo (opcional)</label>
-            <input type="file" name="imagen" id="crear-imagen"
-                   class="form-control" accept="image/*">
-            <img id="crear-preview" class="mt-2 rounded d-none"
-                 style="max-height:120px;" alt="Vista previa">
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -124,11 +107,13 @@
   </div>
 </div>
 
-<!-- ══════════════════════ MODAL EDITAR ══════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════
+     MODAL EDITAR
+     ══════════════════════════════════════════════════════════════════════ -->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form method="post" enctype="multipart/form-data" novalidate>
+      <form method="post" novalidate>
         {% csrf_token %}
         <input type="hidden" name="accion" value="editar">
         <input type="hidden" name="id" id="edit-id">
@@ -145,23 +130,6 @@
             <label class="form-label">NIT / CI</label>
             <input type="text" name="nit" id="edit-nit" class="form-control" required>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Imagen / Logo</label>
-            <div class="mb-2">
-              <img id="edit-preview" class="rounded d-none"
-                   style="max-height:120px;" alt="Imagen actual">
-            </div>
-            <input type="file" name="imagen" id="edit-imagen"
-                   class="form-control" accept="image/*">
-            <div class="form-text">Deja vacío para conservar la imagen actual.</div>
-            <div class="form-check mt-2 d-none" id="edit-quitar-wrap">
-              <input class="form-check-input" type="checkbox"
-                     name="quitar_imagen" value="1" id="edit-quitar">
-              <label class="form-check-label text-danger" for="edit-quitar">
-                Quitar imagen actual
-              </label>
-            </div>
-          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -174,7 +142,9 @@
   </div>
 </div>
 
-<!-- ══════════════════════ MODAL ELIMINAR ══════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════
+     MODAL ELIMINAR
+     ══════════════════════════════════════════════════════════════════════ -->
 <div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -207,70 +177,27 @@
   </div>
 </div>
 
-<!-- ══════════════════════ JS ══════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════════
+     JS: rellenar modales con los datos de cada fila
+     ══════════════════════════════════════════════════════════════════════ -->
 <script>
-  // Modal EDITAR: cargar datos de la fila
+  // Modal EDITAR
   document.querySelectorAll(".btn-editar").forEach(btn => {
     btn.addEventListener("click", () => {
       document.getElementById("edit-id").value     = btn.dataset.id;
       document.getElementById("edit-nombre").value = btn.dataset.nombre;
       document.getElementById("edit-nit").value    = btn.dataset.nit;
-
-      const preview     = document.getElementById("edit-preview");
-      const quitarWrap  = document.getElementById("edit-quitar-wrap");
-      const quitar      = document.getElementById("edit-quitar");
-      quitar.checked = false;
-
-      if (btn.dataset.imagen) {
-        preview.src = btn.dataset.imagen;
-        preview.classList.remove("d-none");
-        quitarWrap.classList.remove("d-none");
-      } else {
-        preview.src = "";
-        preview.classList.add("d-none");
-        quitarWrap.classList.add("d-none");
-      }
-      document.getElementById("edit-imagen").value = "";
     });
   });
 
   // Modal ELIMINAR
   document.querySelectorAll(".btn-eliminar").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.getElementById("del-id").value           = btn.dataset.id;
-      document.getElementById("del-nombre").textContent = btn.dataset.nombre;
-      document.getElementById("del-nit").textContent    = btn.dataset.nit;
+      document.getElementById("del-id").value            = btn.dataset.id;
+      document.getElementById("del-nombre").textContent  = btn.dataset.nombre;
+      document.getElementById("del-nit").textContent     = btn.dataset.nit;
     });
   });
-
-  // Preview al elegir archivo
-  function bindPreview(inputId, previewId) {
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-    if (!input) return;
-    input.addEventListener("change", () => {
-      const file = input.files[0];
-      if (file) {
-        preview.src = URL.createObjectURL(file);
-        preview.classList.remove("d-none");
-      }
-    });
-  }
-  bindPreview("crear-imagen", "crear-preview");
-  bindPreview("edit-imagen",  "edit-preview");
-
-  // "Quitar imagen actual" → limpia preview
-  const editQuitar = document.getElementById("edit-quitar");
-  if (editQuitar) {
-    editQuitar.addEventListener("change", () => {
-      if (editQuitar.checked) {
-        const preview = document.getElementById("edit-preview");
-        preview.src = "";
-        preview.classList.add("d-none");
-        document.getElementById("edit-imagen").value = "";
-      }
-    });
-  }
 </script>
 
 {% endblock %}

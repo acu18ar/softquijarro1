@@ -16,6 +16,10 @@ def inicio(request):
     })
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 75a95613f60bda2004e352862a02c5fddd9b8c31
 @login_required
 def gestionar(request):
     cliente_editar = None
@@ -23,43 +27,29 @@ def gestionar(request):
     if request.method == "POST":
         accion = request.POST.get("accion")
 
-        # ───────── CREAR ─────────
         if accion == "crear":
-            # 🔑 request.FILES es OBLIGATORIO para que llegue la imagen
-            form = ClienteForm(request.POST, request.FILES)
+            form = ClienteForm(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, "Cliente creado correctamente.")
                 return redirect("clientes:gestionar")
             messages.error(request, "Revisa los errores del formulario.")
 
-        # ───────── EDITAR ─────────
         elif accion == "editar":
             pk = request.POST.get("id")
             cliente = get_object_or_404(Cliente, pk=pk)
-            form = ClienteForm(request.POST, request.FILES, instance=cliente)
+            form = ClienteForm(request.POST, instance=cliente)
             if form.is_valid():
-                # Si el usuario marcó "quitar imagen" y no subió una nueva
-                if request.POST.get("quitar_imagen") == "1" and not request.FILES.get("imagen"):
-                    if cliente.imagen:
-                        cliente.imagen.delete(save=False)
-                    cliente.imagen = None
-                    cliente.save()
-                else:
-                    form.save()
+                form.save()
                 messages.success(request, "Cliente actualizado correctamente.")
                 return redirect("clientes:gestionar")
             messages.error(request, "Revisa los errores del formulario.")
             cliente_editar = cliente
 
-        # ───────── ELIMINAR ─────────
         elif accion == "eliminar":
             pk = request.POST.get("id")
             cliente = get_object_or_404(Cliente, pk=pk)
             nombre = cliente.nombre
-            # Borra también el archivo físico
-            if cliente.imagen:
-                cliente.imagen.delete(save=False)
             cliente.delete()
             messages.success(request, f"Cliente '{nombre}' eliminado correctamente.")
             return redirect("clientes:gestionar")

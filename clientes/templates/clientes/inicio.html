@@ -14,7 +14,6 @@
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th>Imagen</th>
           <th>Nombre o razón social</th>
           <th>NIT / CI</th>
         </tr>
@@ -22,24 +21,12 @@
       <tbody>
         {% for c in clientes %}
         <tr>
-          <td>
-            {% if c.imagen %}
-              <img src="{{ c.imagen.url }}" alt="{{ c.nombre }}"
-                   class="rounded object-fit-cover"
-                   style="width:44px; height:44px;">
-            {% else %}
-              <div class="rounded bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center"
-                   style="width:44px; height:44px;">
-                <i class="bi bi-person text-secondary"></i>
-              </div>
-            {% endif %}
-          </td>
           <td>{{ c.nombre }}</td>
           <td>{{ c.nit }}</td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="3" class="text-muted text-center py-3">
+          <td colspan="2" class="text-muted text-center py-3">
             No hay clientes registrados.
             <a href="{% url 'clientes:gestionar' %}">Crear el primero</a>.
           </td>
