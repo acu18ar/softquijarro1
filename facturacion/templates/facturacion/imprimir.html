@@ -1,10 +1,13 @@
 
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Factura {{ factura.pk }}</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,51 +15,215 @@
             margin: 30px auto;
             padding: 20px;
             color: #222;
+            background: #fff;
         }
+
+        .acciones {
+            margin-bottom: 20px;
+        }
+
+        .acciones button {
+            padding: 10px 16px;
+            margin-right: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-imprimir {
+            background: #198754;
+            color: white;
+        }
+
+        .btn-volver {
+            background: #6c757d;
+            color: white;
+        }
+
         .encabezado {
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            gap: 20px;
             border-bottom: 2px solid #222;
             padding-bottom: 16px;
             margin-bottom: 24px;
         }
+
+        .empresa {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-factura {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .titulo-factura h2 {
+            margin: 0 0 8px;
+            font-size: 25px;
+        }
+
+        .titulo-factura p {
+            margin: 0;
+            color: #555;
+        }
+
+        .numero {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .numero h3 {
+            margin: 0 0 8px;
+        }
+
+        .numero p {
+            margin: 0;
+        }
+
+        .datos-cliente {
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 24px;
         }
+
         th, td {
             padding: 10px;
             border-bottom: 1px solid #ddd;
             text-align: left;
         }
-        .numero, .derecha { text-align: right; }
-        .total { font-size: 20px; font-weight: bold; }
-        .acciones { margin-bottom: 20px; }
+
+        th {
+            background: #f2f2f2;
+            border-top: 1px solid #ddd;
+        }
+
+        .numero-columna,
+        .derecha {
+            text-align: right;
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .pie-factura {
+            margin-top: 35px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+        }
+
         @media print {
-            .acciones { display: none; }
-            body { margin: 0; padding: 0; }
+            body {
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+            }
+
+            .acciones {
+                display: none !important;
+            }
+
+            .logo-factura {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            th {
+                background: #f2f2f2 !important;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .encabezado {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .numero {
+                text-align: left;
+            }
+
+            .logo-factura {
+                width: 75px;
+                height: 75px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 6px 4px;
+            }
         }
     </style>
 </head>
+
 <body>
+
     <div class="acciones">
-        <button onclick="window.print()">Imprimir factura</button>
-        <button onclick="window.history.back()">Volver</button>
+        <button class="btn-imprimir" onclick="window.print()">
+            Imprimir factura
+        </button>
+
+        <button class="btn-volver" onclick="window.history.back()">
+            Volver
+        </button>
     </div>
 
     <div class="encabezado">
-        <div>
-            <h2>FACTURA</h2>
-            <p>Documento de venta</p>
+
+        <div class="empresa">
+            <img
+                src="{% static 'img/logo.png' %}"
+                alt="Logo de la empresa"
+                class="logo-factura"
+            >
+
+            <div class="titulo-factura">
+                <h2>FACTURA</h2>
+                <p>Documento de venta</p>
+            </div>
         </div>
+
         <div class="numero">
             <h3>N.º {{ factura.pk }}</h3>
             <p>{{ factura.fecha|date:"d/m/Y H:i" }}</p>
         </div>
+
     </div>
 
-    <p><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
+    <div class="datos-cliente">
+        <p>
+            <strong>Cliente:</strong>
+            {{ factura.cliente.nombre }}
+        </p>
+    </div>
 
     <table>
         <thead>
@@ -67,22 +234,39 @@
                 <th class="derecha">Subtotal (Bs)</th>
             </tr>
         </thead>
+
         <tbody>
             {% for detalle in factura.detalles.all %}
             <tr>
                 <td>{{ detalle.producto.nombre }}</td>
-                <td class="derecha">{{ detalle.precio_unitario|floatformat:2 }}</td>
-                <td class="derecha">{{ detalle.cantidad }}</td>
-                <td class="derecha">{{ detalle.subtotal|floatformat:2 }}</td>
+                <td class="derecha">
+                    {{ detalle.precio_unitario|floatformat:2 }}
+                </td>
+                <td class="derecha">
+                    {{ detalle.cantidad }}
+                </td>
+                <td class="derecha">
+                    {{ detalle.subtotal|floatformat:2 }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
+
         <tfoot>
             <tr>
-                <td colspan="3" class="derecha total">TOTAL (Bs)</td>
-                <td class="derecha total">{{ factura.total|floatformat:2 }}</td>
+                <td colspan="3" class="derecha total">
+                    TOTAL (Bs)
+                </td>
+                <td class="derecha total">
+                    {{ factura.total|floatformat:2 }}
+                </td>
             </tr>
         </tfoot>
     </table>
+
+    <div class="pie-factura">
+        <p>Gracias por su compra.</p>
+    </div>
+
 </body>
 </html>

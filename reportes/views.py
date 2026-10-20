@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 from django.db.models import Count, Sum
 from django.shortcuts import render
 
@@ -15,7 +15,7 @@ def inicio(request):
     """
     resumen = Factura.objects.aggregate(cantidad=Count("id"), vendido=Sum("total"))
     return render(request, "reportes/inicio.html", {"resumen": resumen})
-=======
+
 """Vistas del módulo Reportes.
 
 Solo lee datos de otros módulos. No crea ni modifica modelos.
@@ -128,4 +128,3 @@ def inicio(request):
 def reporte_imprimible(request):
     """Vista lista para imprimir o guardar como PDF desde el navegador."""
     return render(request, "reportes/reporte_imprimible.html", _obtener_contexto_reporte())
->>>>>>> 75a95613f60bda2004e352862a02c5fddd9b8c31
