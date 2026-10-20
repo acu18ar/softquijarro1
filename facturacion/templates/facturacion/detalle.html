@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+
+{% block titulo %}Factura {{ factura.pk }}{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3">Factura N.º {{ factura.pk }}</h1>
+    <div class="d-flex gap-2">
+        <a href="{% url 'facturacion:imprimir' factura.pk %}" class="btn btn-outline-primary">
+            <i class="bi bi-printer"></i> Imprimir
+        </a>
+        <a href="{% url 'facturacion:inicio' %}" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="text-muted small">Cliente</div>
+                <div class="fw-semibold">{{ factura.cliente.nombre }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-muted small">Fecha</div>
+                <div>{{ factura.fecha|date:"d/m/Y H:i" }}</div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-end">Precio (Bs)</th>
+                        <th class="text-end">Cantidad</th>
+                        <th class="text-end">Subtotal (Bs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in factura.detalles.all %}
+                    <tr>
+                        <td>{{ detalle.producto.nombre }}</td>
+                        <td class="text-end">{{ detalle.precio_unitario|floatformat:2 }}</td>
+                        <td class="text-end">{{ detalle.cantidad }}</td>
+                        <td class="text-end">{{ detalle.subtotal|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-end">TOTAL (Bs)</th>
+                        <th class="text-end">{{ factura.total|floatformat:2 }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
