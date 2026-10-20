@@ -7,12 +7,13 @@ class ProveedorForm(forms.ModelForm):
     class Meta:
         model = Proveedor
         fields = [
-            "nombre", "nit", "tipo", "categoria",
+            "nombre", "nit", "tipo", "categoria", "logo_url",
             "contacto", "telefono", "correo", "direccion",
         ]
         widgets = {
             "nombre": forms.TextInput(attrs={"placeholder": "Ej. Materiales El Constructor"}),
             "nit": forms.TextInput(attrs={"placeholder": "Número de identificación tributaria o personal"}),
+            "logo_url": forms.URLInput(attrs={"placeholder": "https://… (enlace a la imagen del logo)"}),
             "tipo": forms.RadioSelect,
             "contacto": forms.TextInput(attrs={"placeholder": "Ej. Juan Pérez"}),
             "telefono": forms.TextInput(attrs={"placeholder": "Ej. 7XXXXXXX"}),

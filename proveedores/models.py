@@ -24,6 +24,7 @@ class Proveedor(models.Model):
     nit = models.CharField("NIT o CI", max_length=20, blank=True)
     tipo = models.CharField("tipo de proveedor", max_length=10, choices=TIPOS, default="empresa")
     categoria = models.CharField("categoría principal", max_length=20, choices=CATEGORIAS, default="otra")
+    logo_url = models.URLField("logo (enlace a la imagen)", max_length=500, blank=True)
 
     # ── B. Información de contacto ──────────────────────────────────────────
     contacto = models.CharField("nombre del contacto", max_length=100, blank=True)
@@ -40,6 +41,11 @@ class Proveedor(models.Model):
         ordering = ["nombre"]
         verbose_name = "proveedor"
         verbose_name_plural = "proveedores"
+
+    @property
+    def inicial(self):
+        """Letra para el círculo que se muestra cuando no hay logo."""
+        return self.nombre[:1].upper() if self.nombre else "?"
 
     def __str__(self):
         return self.nombre

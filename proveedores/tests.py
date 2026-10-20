@@ -48,6 +48,13 @@ class ProveedoresTests(TestCase):
         self.assertContains(respuesta, "registrado")
         self.assertTrue(Proveedor.objects.filter(nombre="Proveedor nuevo").exists())
 
+    def test_logo_se_muestra_si_existe_y_si_no_hay_inicial(self):
+        Proveedor.objects.create(nombre="Con Logo", logo_url="https://example.com/logo.png")
+        Proveedor.objects.create(nombre="Zeta Sin Logo")
+        respuesta = self.client.get(reverse("proveedores:inicio"))
+        self.assertContains(respuesta, "https://example.com/logo.png")
+        self.assertContains(respuesta, ">Z</span>")
+
     def test_telefono_es_obligatorio_en_el_formulario(self):
         respuesta = self.client.post(reverse("proveedores:crear"), self.datos(telefono=""))
         self.assertEqual(respuesta.status_code, 200)

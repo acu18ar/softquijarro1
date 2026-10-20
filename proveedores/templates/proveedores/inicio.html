@@ -31,7 +31,16 @@
     <tbody>
       {% for p in proveedores %}
       <tr>
-        <td><a href="{% url 'proveedores:detalle' p.pk %}" class="fw-semibold text-decoration-none">{{ p.nombre }}</a></td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            {% if p.logo_url %}
+            <img src="{{ p.logo_url }}" alt="Logo de {{ p.nombre }}" width="40" height="40" class="rounded border bg-white" style="object-fit: contain;">
+            {% else %}
+            <span class="rounded-circle bg-primary-subtle text-primary fw-bold d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">{{ p.inicial }}</span>
+            {% endif %}
+            <a href="{% url 'proveedores:detalle' p.pk %}" class="fw-semibold text-decoration-none">{{ p.nombre }}</a>
+          </div>
+        </td>
         <td>{{ p.get_categoria_display }}</td>
         <td>{{ p.contacto|default:"—" }}</td>
         <td>{{ p.telefono|default:"—" }}</td>
